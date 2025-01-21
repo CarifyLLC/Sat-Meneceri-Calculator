@@ -37,11 +37,11 @@
             min-height: 50vh;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                min-height: 100vh;
+        	@media (max-width: 768px) {
+            	 .container {
+                   min-height: 100vh;
+            	 }
             }
-        }
 
         .logo {
             margin-bottom: 20px;
@@ -98,8 +98,8 @@
             font-size: 16px;
             transition: background-color 0.3s ease, transform 0.2s ease;
             margin: 50px auto 0px;
-            margin-top: 20px;
-            margin-bottom: 10px;
+		margin-top: 20px;
+		margin-bottom: 10px;
             display: block;
             position: relative;
         }
@@ -200,7 +200,7 @@
         .social-media {
             text-align: center;
             margin-top: 70px;
-            margin-bottom: -20px;
+		margin-bottom: -20px;
         }
         .social-media a {
             margin: 0 15px;
@@ -231,6 +231,12 @@
         <form id="priceCalculator">
             <label for="D2">Əsas Qiymət:</label>
             <input type="number" id="D2" name="D2" required>
+
+            <label for="F2">Alıcı:</label>
+            <select id="F2" name="F2" required>
+                <option value="Ofis">Ofis</option>
+                <option value="Menecer">Menecer</option>
+            </select>
 
             <label for="productAge">Avtomobilin Yaşı:</label>
             <select id="productAge" name="productAge" required>
@@ -306,13 +312,13 @@
         const formatNumber = (number) => new Intl.NumberFormat('en-US').format(Math.round(number));
         const formatCurrency = (value, currencySymbol) => `${currencySymbol}${formatNumber(value)}`;
 
-        const sendDataToGoogleSheet = async (carPrice, dealer, link, calculatedPrice, exchangeRate, calculationId) => {
+        const sendDataToGoogleSheet = async (carPrice, dealer, link, calculatedPrice, rawExchangeRate, calculationId) => {
             const numberOfDigits = carPrice.toString().replace(/[^0-9]/g, '').length;
             const convertedCarPrice = numberOfDigits < 7 ? carPrice * 10000 : carPrice;
 
             const formattedCarPrice = `₩${formatNumber(convertedCarPrice)}`;
             const formattedPrice = `$${formatNumber(calculatedPrice)}`;
-            const formattedExchangeRate = formatCurrency(exchangeRate, '₩');
+            const formattedRawExchangeRate = formatCurrency(rawExchangeRate, '₩');
 
             const formatDate = (date) => {
                 const day = String(date.getDate()).padStart(2, '0');
@@ -328,7 +334,7 @@
                 dealer: dealer,
                 link: link,
                 calculatedPrice: formattedPrice,
-                exchangeRate: formattedExchangeRate,
+                exchangeRate: formattedRawExchangeRate,
                 calculationId: calculationId,
                 timestamp: timestamp
             };
@@ -345,7 +351,7 @@
             });
         };
 
-const calculatePrice = async () => {
+        const calculatePrice = async () => {
             const D2Input = document.getElementById('D2');
             const F2Select = document.getElementById('F2');
             const productAge = document.getElementById('productAge').value;
