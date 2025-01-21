@@ -316,7 +316,7 @@
 
             const formatDate = (date) => {
                 const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
                 const year = date.getFullYear();
                 return `${day}/${month}/${year}`;
             };
@@ -362,8 +362,6 @@
 
             const F2 = "Menecer"; // Default value
 
-            let KRWUSD = 0;
-
             try {
                 const apiKey = 'f5106c228dd6e51b2d42b7f5';
                 const response = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`);
@@ -379,14 +377,44 @@
                 let adjustment = 0;
                 let finalPriceUSD = 0;
 
-                // Calculation logic remains unchanged
+                if (productAge === "more") {
+                    if (F2 === "Menecer") {
+                        if (adjustedBasePriceUSD <= 7500) {
+                            feePercent = 0.03;
+                            adjustment = 650;
+                        } else if (adjustedBasePriceUSD > 7500 && adjustedBasePriceUSD <= 12000) {
+                            feePercent = 0.03;
+                            adjustment = 600;
+                        } else if (adjustedBasePriceUSD > 12000 && adjustedBasePriceUSD <= 20000) {
+                            feePercent = 0.03;
+                            adjustment = 650;
+                        } else if (adjustedBasePriceUSD > 20000) {
+                            feePercent = 0.04;
+                            adjustment = 700;
+                        }
+                    }
+                    const feeAmount = adjustedBasePriceUSD / 1.1 * feePercent;
+                    finalPriceUSD = adjustedBasePriceUSD - feeAmount + adjustment;
+                } else if (productAge === "less") {
+                    if (F2 === "Menecer") {
+                        if (adjustedBasePriceUSD <= 7500) {
+                            adjustment = 100;
+                        } else if (adjustedBasePriceUSD > 7500 && adjustedBasePriceUSD <= 12000) {
+                            adjustment = 200;
+                        } else if (adjustedBasePriceUSD > 12000 && adjustedBasePriceUSD <= 20000) {
+                            adjustment = 300;
+                        } else if (adjustedBasePriceUSD > 20000) {
+                            adjustment = 500;
+                        }
+                    }
+                    const feeAmount = adjustedBasePriceUSD / 1.1 * 0.03;
+                    finalPriceUSD = adjustedBasePriceUSD + feeAmount + adjustment;
+                }
 
-                // Format and display the price
                 const formattedPrice = formatNumber(finalPriceUSD);
                 document.getElementById('priceValue').textContent = `$${formattedPrice}`;
                 document.getElementById('result').classList.remove('error');
 
-                // Display raw exchange rate
                 const formattedRawExchangeRate = formatCurrency(rawExchangeRate, '₩');
                 document.getElementById('exchangeRate').textContent = formattedRawExchangeRate;
 
