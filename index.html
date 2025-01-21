@@ -345,11 +345,12 @@
             });
         };
 
-        const calculatePrice = async () => {
+const calculatePrice = async () => {
             const D2Input = document.getElementById('D2');
+            const F2Select = document.getElementById('F2');
             const productAge = document.getElementById('productAge').value;
             const D2 = parseFloat(D2Input.value);
-            const F2 = "Menecer"; // Default value
+            const F2 = F2Select.value;
 
             if (isNaN(D2) || D2 <= 0) {
                 document.getElementById('priceValue').textContent = '$0';
@@ -369,11 +370,12 @@
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
 
-		        // Fetch KRW/USD rate and apply a 15₩ subtraction
-    		    let KRWUSD = data.conversion_rates.KRW;
-   	    	    KRWUSD -= 10; //
+		// Fetch KRW/USD rate
+        	const rawExchangeRate = data.conversion_rates.KRW;
+        	const adjustedExchangeRate = rawExchangeRate - 15; // Subtract 15 KRW for calculations
 
-                const adjustedBasePriceUSD = adjustedBasePrice / KRWUSD;
+
+                const adjustedBasePriceUSD = adjustedBasePrice / adjustedExchangeRate;
 
                 let feePercent = 0;
                 let adjustment = 0;
@@ -387,27 +389,27 @@
                             feePercent = 0.03;
                             adjustment = 250;
                         } else if (adjustedBasePriceUSD > 7500 && adjustedBasePriceUSD <= 12000) {
-                            feePercent = 0.04;
-                            adjustment = 200;
+                            feePercent = 0.03;
+                            adjustment = 250;
                         } else if (adjustedBasePriceUSD > 12000 && adjustedBasePriceUSD <= 20000) {
-                            feePercent = 0.05;
-                            adjustment = 100;
+                            feePercent = 0.03;
+                            adjustment = 200;
                         } else if (adjustedBasePriceUSD > 20000) {
-                            feePercent = 0.05;
-                            adjustment = 0;
+                            feePercent = 0.04;
+                            adjustment = 100;
                         }
                     } else if (F2 === "Menecer") {
                         if (adjustedBasePriceUSD <= 7500) {
                             feePercent = 0.03;
                             adjustment = 650;
                         } else if (adjustedBasePriceUSD > 7500 && adjustedBasePriceUSD <= 12000) {
-                            feePercent = 0.04;
+                            feePercent = 0.03;
                             adjustment = 600;
                         } else if (adjustedBasePriceUSD > 12000 && adjustedBasePriceUSD <= 20000) {
-                            feePercent = 0.05;
+                            feePercent = 0.03;
                             adjustment = 650;
                         } else if (adjustedBasePriceUSD > 20000) {
-                            feePercent = 0.06;
+                            feePercent = 0.04;
                             adjustment = 700;
                         }
                     }
@@ -446,14 +448,14 @@
                 document.getElementById('priceValue').textContent = `$${formattedPrice}`;
                 document.getElementById('result').classList.remove('error');
 
-                // Format and display the exchange rate
-                const formattedExchangeRate = formatNumber(KRWUSD);
-                document.getElementById('exchangeRate').textContent = `₩${formattedExchangeRate}`;
+                // Display raw exchange rate
+        	const formattedRawExchangeRate = formatCurrency(rawExchangeRate, '₩');
+        	document.getElementById('exchangeRate').textContent = formattedRawExchangeRate;
 
                 const uniqueID = Math.random().toString(36).substring(2, 9).toUpperCase();
                 document.getElementById('calculationID').textContent = uniqueID;
 
-                sendDataToGoogleSheet(D2, F2, '', finalPriceUSD, KRWUSD, uniqueID);
+                sendDataToGoogleSheet(D2, F2, '', finalPriceUSD, rawExchangeRate, uniqueID);
 
             } catch (error) {
                 console.error('Xarici valyuta məzənnəsi alınarkən səhv baş verdi:', error);
