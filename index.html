@@ -369,7 +369,7 @@
                 const data = await response.json();
 
                 const rawExchangeRate = data.conversion_rates.KRW;
-                const adjustedExchangeRate = rawExchangeRate - 15;
+                const adjustedExchangeRate = rawExchangeRate - 12;
 
                 const adjustedBasePriceUSD = adjustedBasePrice / adjustedExchangeRate;
 
