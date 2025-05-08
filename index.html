@@ -381,16 +381,16 @@
                     if (F2 === "Menecer") {
                         if (adjustedBasePriceUSD <= 7500) {
                             feePercent = 0.03;
-                            adjustment = 650;
+                            adjustment = 450;
                         } else if (adjustedBasePriceUSD > 7500 && adjustedBasePriceUSD <= 12000) {
                             feePercent = 0.03;
-                            adjustment = 600;
+                            adjustment = 500;
                         } else if (adjustedBasePriceUSD > 12000 && adjustedBasePriceUSD <= 20000) {
                             feePercent = 0.03;
-                            adjustment = 650;
+                            adjustment = 600;
                         } else if (adjustedBasePriceUSD > 20000) {
                             feePercent = 0.04;
-                            adjustment = 700;
+                            adjustment = 650;
                         }
                     }
                     const feeAmount = adjustedBasePriceUSD / 1.1 * feePercent;
